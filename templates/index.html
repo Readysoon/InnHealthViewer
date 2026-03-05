@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>InnHealth – Patient List</title>
+  <link rel="stylesheet" href="/static/style.css?v=12">
+</head>
+<body class="index-page">
+  <header class="top-bar">
+    <h1>InnHealth Video Viewer</h1>
+    <span class="subtitle">{{ patients|length }} patient folders · Pfeiltasten zum Navigieren</span>
+  </header>
+
+  <main class="patient-grid" id="patient-grid" tabindex="0">
+    {% for p in patients %}
+    <a class="patient-card" href="/patient/{{ p }}" data-patient="{{ p }}" data-index="{{ loop.index0 }}">
+      <span class="pid">{{ p }}</span>
+    </a>
+    {% else %}
+    <p class="empty">No patient folders found in X:\INNHEALTH\Gait</p>
+    {% endfor %}
+  </main>
+  <script>
+    (function() {
+      const grid = document.getElementById("patient-grid");
+      const cards = Array.from(grid.querySelectorAll(".patient-card"));
+      if (!cards.length) return;
+
+      let focusedIndex = 0;
+      function setFocus(idx) {
+        focusedIndex = Math.max(0, Math.min(idx, cards.length - 1));
+        cards.forEach((c, i) => c.classList.toggle("focused", i === focusedIndex));
+        cards[focusedIndex].focus();
+      }
+
+      grid.addEventListener("keydown", function(e) {
+        switch (e.key) {
+          case "ArrowLeft":
+          case "ArrowUp":
+            e.preventDefault();
+            setFocus(focusedIndex - 1);
+            break;
+          case "ArrowRight":
+          case "ArrowDown":
+            e.preventDefault();
+            setFocus(focusedIndex + 1);
+            break;
+          case "Enter":
+            if (cards[focusedIndex]) {
+              e.preventDefault();
+              window.location.href = cards[focusedIndex].href;
+            }
+            break;
+          case "Home":
+            e.preventDefault();
+            setFocus(0);
+            break;
+          case "End":
+            e.preventDefault();
+            setFocus(cards.length - 1);
+            break;
+        }
+      });
+
+      cards.forEach((card, i) => {
+        card.setAttribute("tabindex", "0");
+        card.addEventListener("focus", () => setFocus(i));
+      });
+      setFocus(0);
+      grid.focus();
+    })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{ patient_id }} – InnHealth Viewer</title>
+  <link rel="stylesheet" href="/static/style.css?v=13">
+</head>
+<body class="patient-page">
+
+  <!-- ── Top navigation bar ─────────────────────────────────────────── -->
+  <header class="top-bar">
+    <a class="btn-nav {% if not prev_id %}disabled{% endif %}"
+       href="{% if prev_id %}/patient/{{ prev_id }}{% else %}#{% endif %}">← Prev</a>
+
+    <div class="nav-center">
+      <a class="home-link" href="/">InnHealth</a>
+      <span class="sep">/</span>
+      <select id="patient-jump" onchange="window.location='/patient/'+this.value">
+        {% for p in all_patients %}
+        <option value="{{ p }}" {% if p == patient_id %}selected{% endif %}>{{ p }}</option>
+        {% endfor %}
+      </select>
+      <span class="key-hint" title="Pfeiltasten links/rechts">← →</span>
+    </div>
+
+    <a class="btn-nav {% if not next_id %}disabled{% endif %}"
+       href="{% if next_id %}/patient/{{ next_id }}{% else %}#{% endif %}">Next →</a>
+  </header>
+
+  <!-- ── Main layout ────────────────────────────────────────────────── -->
+  <div class="workspace">
+
+    <!-- Left: activity rows -->
+    <section class="activity-panel" id="activity-panel">
+      <div class="panel-header">
+        <h2>{{ patient_id }}</h2>
+        <span class="hint">Drop videos from the right into a category row</span>
+      </div>
+
+      {% for cat in categories %}
+      <div class="category-row drop-zone" data-category="{{ cat }}" data-patient="{{ patient_id }}">
+        <div class="row-label">
+          <span class="cat-name">{{ cat }}</span>
+          <span class="cat-count" id="count-{{ cat }}">0</span>
+        </div>
+        <div class="video-strip" id="strip-{{ cat }}">
+          <!-- populated by JS -->
+          <div class="loading-indicator">Loading…</div>
+        </div>
+      </div>
+      {% endfor %}
+    </section>
+
+    <!-- Right: unsorted panel -->
+    <aside class="unsorted-panel">
+      <div class="panel-header">
+        <h2 id="unsorted-header">Unsorted Videos</h2>
+        <select id="date-select">
+          <option value="">— select date folder —</option>
+        </select>
+        <div class="lr-filter">
+          <button class="btn-lr active" data-lr="all">All</button>
+          <button class="btn-lr" data-lr="L">L</button>
+          <button class="btn-lr" data-lr="R">R</button>
+        </div>
+      </div>
+      <div class="video-grid" id="unsorted-grid">
+        <p class="empty-hint">Select a date folder above</p>
+      </div>
+    </aside>
+
+  </div><!-- .workspace -->
+
+  <script>
+    // Pass server data to JS
+    window.PATIENT_ID = "{{ patient_id }}";
+    window.CATEGORIES  = {{ categories | tojson }};
+    window.ALL_PATIENTS = {{ all_patients | tojson }};
+  </script>
+  <script src="/static/app.js?v=15"></script>
+</body>
+</html>
