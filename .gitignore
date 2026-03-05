@@ -11,6 +11,9 @@ env/
 data/video_index.json
 data/resolution_cache.json
 
+# Model weights (copy from main project; do not commit)
+models/*.pth
+
 # OS
 .DS_Store
 Thumbs.db

@@ -5,9 +5,9 @@ Standalone Flask app to browse and manage Gait video folders: view patient categ
 ## Requirements
 
 - Python 3.10+
-- [Flask](https://pypi.org/project/Flask/) (see `requirements.txt`)
-- **FFmpeg** (optional, for resolution/duration when no VideoClassifier)
-- **VideoClassifier** (optional; if present in parent or on `PYTHONPATH`, enables L/R classification and metadata)
+- Dependencies in `requirements.txt`: Flask, torch, torchvision, opencv-python-headless, Pillow, python-dotenv
+- **FFmpeg** (optional, for resolution/duration)
+- **L/R model** (optional): copy `left_right_mobilenetv3.pth` from the main project’s `ML_Left_Right/` into `viewer/models/` so unsorted videos get L/R classification. If missing, the viewer still runs and shows "?" for L/R.
 
 ## Setup
 
@@ -45,6 +45,8 @@ Standalone Flask app to browse and manage Gait video folders: view patient categ
 
 4. Optional: put `video_index.json` in `data/` so the viewer can match unsorted videos by date. Otherwise leave `data/` empty; patient list comes from scanning `GAIT_DIR` for `IH-XXXX-B` folders.
 
+5. Optional (L/R classification): copy `left_right_mobilenetv3.pth` from the main project’s `ML_Left_Right/` into `viewer/models/`. See `models/README.md`.
+
 ## Run
 
 From the `viewer` directory:
@@ -73,10 +75,12 @@ Your `GAIT_DIR` should look like:
   - `thumbnails/` — JPEGs named `{stem}-1.jpg` … `{stem}-5.jpg`  
   - `Downloads_Unsortiert/` — date-named subfolders with unsorted videos  
 
-This repo:
+This repo (runs without the main project):
 
 - `app.py` — Flask app  
-- `config.py` — paths from env  
+- `config.py` — paths from env / CLI  
+- `VideoClassifier.py` — L/R from thumbnails + metadata via ffprobe  
+- `models/` — put `left_right_mobilenetv3.pth` here for L/R (see `models/README.md`)  
 - `templates/`, `static/` — frontend  
 - `data/` — optional `video_index.json`, `resolution_cache.json`  
 
