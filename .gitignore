@@ -8,7 +8,6 @@ env/
 .env
 
 # Local data (optional; commit sample or leave empty)
-data/video_index.json
 data/resolution_cache.json
 
 # Model weights (copy from main project; do not commit)
